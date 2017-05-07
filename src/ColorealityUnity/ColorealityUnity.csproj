@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D1E527B2-E6A7-4233-8474-90EBB764CA55}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Coloreality</RootNamespace>
+    <AssemblyName>Coloreality</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\Unity\Editor\Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Coloreality\Client\Events\UpdateDataEventArgs.cs">
+      <Link>Events\UpdateDataEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\Coloreality\Client\SocketClient.cs">
+      <Link>SocketClient.cs</Link>
+    </Compile>
+    <Compile Include="..\Coloreality\DataType.cs">
+      <Link>DataType.cs</Link>
+    </Compile>
+    <Compile Include="..\Coloreality\Events\ErrorEventArgs.cs">
+      <Link>Events\ErrorEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\Coloreality\Events\ReceiveEventArgs.cs">
+      <Link>Events\ReceiveEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\Coloreality\Globals.cs">
+      <Link>Globals.cs</Link>
+    </Compile>
+    <Compile Include="..\Coloreality\LeapWrapper\LeapData.cs">
+      <Link>LeapWrapper\LeapData.cs</Link>
+    </Compile>
+    <Compile Include="..\Coloreality\LeapWrapper\LeapHmdConfig.cs">
+      <Link>LeapWrapper\LeapHmdConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\Coloreality\LeapWrapper\Receiver\LeapHmdConfigReceiver.cs">
+      <Link>LeapWrapper\LeapHmdConfigReceiver.cs</Link>
+    </Compile>
+    <Compile Include="..\Coloreality\LeapWrapper\Receiver\LeapSimulator.cs">
+      <Link>LeapWrapper\LeapSimulator.cs</Link>
+    </Compile>
+    <Compile Include="..\Coloreality\PreSerialization.cs">
+      <Link>PreSerialization.cs</Link>
+    </Compile>
+    <Compile Include="..\Coloreality\SimulatorBase.cs">
+      <Link>SimulatorBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Coloreality\Utilities\ByteUtil.cs">
+      <Link>Utilities\ByteUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\Coloreality\Utilities\DefaultBinder.cs">
+      <Link>Utilities\DefaultBinder.cs</Link>
+    </Compile>
+    <Compile Include="..\Coloreality\Utilities\NetworkUtil.cs">
+      <Link>Utilities\NetworkUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\Coloreality\Utilities\SerializationUtil.cs">
+      <Link>Utilities\SerializationUtil.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
