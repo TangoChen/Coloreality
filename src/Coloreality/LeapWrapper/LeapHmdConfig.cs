@@ -6,7 +6,7 @@ namespace Coloreality.LeapWrapper
     public class LeapHmdConfig
     {
         [NonSerialized]
-        public const int DataIndex = 36;
+        public const int DATA_INDEX = 36;
 
         public float OffsetX = 0;
         public float OffsetY = 0;

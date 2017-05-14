@@ -8,7 +8,7 @@ namespace Coloreality.LeapWrapper
     public class LeapData
     {
         [NonSerialized]
-        public const int DataIndex = 35;
+        public const int DATA_INDEX = 35;
 
         public LeapFrame frame = null;
 

@@ -22,16 +22,16 @@ namespace Coloreality
         /// </summary>
         public byte[] MessagePart { get; private set; }
 
-        private object serializedObject = null;
+        private object _serializedObject = null;
         public object SerializedObject
         {
             get
             {
-                return serializedObject;
+                return _serializedObject;
             }
         }
 
-        private string messageInString = string.Empty;
+        private string _messageInString = string.Empty;
 
         /// <summary>
         /// Default is string.Empty.
@@ -40,11 +40,11 @@ namespace Coloreality
         {
             get
             {
-                if (MessageType == DataType.String && messageInString == string.Empty)
+                if (MessageType == DataType.String && _messageInString == string.Empty)
                 {
-                    messageInString = Encoding.UTF8.GetString(MessagePart);
+                    _messageInString = Encoding.UTF8.GetString(MessagePart);
                 }
-                return messageInString;
+                return _messageInString;
             }
         }
 
@@ -65,7 +65,7 @@ namespace Coloreality
 
             if (MessageType == DataType.PreSerialization || MessageType == DataType.Serialization)
             {
-                serializedObject = SerializationUtil.Deserialize(MessagePart);
+                _serializedObject = SerializationUtil.Deserialize(MessagePart);
             }
 
         }

@@ -11,7 +11,7 @@ namespace Coloreality.Client
 
     public class SocketClient
     {
-        public int bufferSize = Globals.DefaultBufferSize;
+        public int bufferSize = Globals.DEFAULT_BUFFER_SIZE;
 
         public event ConnectEventHandler OnConnected;
         public event ReceiveEventHandler OnReceived;
@@ -22,54 +22,54 @@ namespace Coloreality.Client
 
         public int connectTimeout = 5000;
 
-        private bool isConnected = false;
+        private bool _isConnected = false;
         public bool IsConnected
         {
             get
             {
-                return isConnected;
+                return _isConnected;
             }
             private set
             {
-                isConnected = value;
+                _isConnected = value;
             }
         }
 
-        private int port = Globals.ServerDefaultPort;
+        private int _port = Globals.SERVER_DEFAULT_PORT;
         public int Port
         {
             get
             {
-                return port;
+                return _port;
             }
             set
             {
-                if (value >= NetworkUtil.PortMin && value <= NetworkUtil.PortMax)
+                if (value >= NetworkUtil.PORT_MIN && value <= NetworkUtil.PORT_MAX)
                 {
-                    port = value;
+                    _port = value;
                 }
                 else
                 {
-                    if (OnError != null) OnError.Invoke(this, new ErrorEventArgs("The port is out of range(" + NetworkUtil.PortMin.ToString() + " to " + NetworkUtil.PortMax.ToString() + ")."));
+                    if (OnError != null) OnError.Invoke(this, new ErrorEventArgs("The port is out of range(" + NetworkUtil.PORT_MIN.ToString() + " to " + NetworkUtil.PORT_MAX.ToString() + ")."));
                 }
             }
         }
 
-        private string ip = Globals.ServerDefaultIp;
-        IPAddress ipAddress = null;
+        private string _ip = Globals.SERVER_DEFAULT_IP;
+        IPAddress _ipAddress = null;
         public string Ip
         {
             get
             {
-                return ip;
+                return _ip;
             }
             set
             {
                 IPAddress tempIp;
                 if (IPAddress.TryParse(value, out tempIp))
                 {
-                    ip = value;
-                    ipAddress = tempIp;
+                    _ip = value;
+                    _ipAddress = tempIp;
                 }
                 else
                 {
@@ -94,15 +94,15 @@ namespace Coloreality.Client
         int newDataIndex = -1;
         int recievedLength = 0;
 
-        public SocketClient(int port = Globals.ServerDefaultPort)
+        public SocketClient(int port = Globals.SERVER_DEFAULT_PORT)
         {
-            Port = port;
+            this.Port = port;
         }
 
         public SocketClient(string ip, int port, bool connectNow = false)
         {
-            Ip = ip;
-            Port = port;
+            this.Ip = ip;
+            this.Port = port;
             if (connectNow)
             {
                 Connect();
@@ -115,14 +115,14 @@ namespace Coloreality.Client
             {
                 try
                 {
-                    if (ipAddress == null)
+                    if (_ipAddress == null)
                     {
                         if (OnError != null) OnError.Invoke(this, new ErrorEventArgs("Server IP is not set."));
                         return;
                     }
 
                     socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                    IPEndPoint endPoint = new IPEndPoint(ipAddress, Port);
+                    IPEndPoint endPoint = new IPEndPoint(_ipAddress, Port);
 
                     IAsyncResult result = socket.BeginConnect(endPoint, null, null);
                     bool success = result.AsyncWaitHandle.WaitOne(connectTimeout, true);
@@ -298,7 +298,7 @@ namespace Coloreality.Client
             doReceive = false;
             if (socket != null)
             {
-                isConnected = false;
+                IsConnected = false;
                 if (socket.Connected)
                 {
                     if (isInitiative) SendType(DataType.Close);

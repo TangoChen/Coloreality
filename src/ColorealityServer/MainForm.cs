@@ -14,29 +14,25 @@ namespace ColorealityServer
         SocketServer server;
         LeapReader leapReader;
 
-        public bool serverStarted = false;
-
         #region Leap object offset/scale configs.
         TrackBar[] LeapConfigBars;
         TextBox[] LeapConfigTextboxs;
 
         public event SerializationReadyEventHandler OnConfigChanged;
         LeapHmdConfig leapConfig = new LeapHmdConfig();
-
-        const float ConfigValuePrecision = 0.0001f;
-        const int ConfigValuePrecisionTimes = (int)(1 / ConfigValuePrecision);
         #endregion
 
-        #region Form controls.
-        const string ServerButtonStart = "&Start Server";
-        const string ServerButtonClose = "&Close Server";
+        #region Form control paramters.
+        string beforeConnectButtonText = "&Start Server";
+        string afterConnectButtonText = "&Close Server";
 
-        const string ConnectionNone = "None";
-        const string ConnectionWaiting = "Waiting...";
+        string beforeConnectConnectionLabel = "None";
+        string afterConnectConnectionLabel = "Waiting...";
+        #endregion
 
+        bool serverStarted = false;
         string logStartText = "Coloreality PC Server\r\nhttp://TangoChen.com\r\n";
-        #endregion
-        
+
         public MainForm()
         {
             InitializeComponent();
@@ -49,7 +45,7 @@ namespace ColorealityServer
             int usePort = Properties.Settings.Default.ServerPort;
             if (!NetworkUtil.IsPortAvailable(usePort))
             {
-                usePort = NetworkUtil.GetOpenPort(Globals.ServerDefaultPort);
+                usePort = NetworkUtil.GetOpenPort(Globals.SERVER_DEFAULT_PORT);
             }
             server = new SocketServer(false, usePort);
             server.OnConnected += Server_OnAddedConnection;
@@ -69,8 +65,8 @@ namespace ColorealityServer
 
             leapReader.StartConnection();
 
-            StartServerButton.Text = ServerButtonStart;
-            UpdateLabel(ConnectionLabel, ConnectionNone);
+            StartServerButton.Text = beforeConnectButtonText;
+            UpdateLabel(ConnectionLabel, beforeConnectConnectionLabel);
 
             AutoStartServerToggle.Checked = Properties.Settings.Default.AutoStartServer;
             if (AutoStartServerToggle.Checked)
@@ -189,8 +185,8 @@ namespace ColorealityServer
                 PortInput.Text = server.Port.ToString();
                 AppendLog("Started server, waiting for connection...");
                 LogTextbox.Select();
-                UpdateLabel(ConnectionLabel, ConnectionWaiting);
-                StartServerButton.Text = ServerButtonClose;
+                UpdateLabel(ConnectionLabel, afterConnectConnectionLabel);
+                StartServerButton.Text = afterConnectButtonText;
             }
             else
             {
@@ -200,8 +196,8 @@ namespace ColorealityServer
                 }
 
                 AppendLog("Closed server.");
-                UpdateLabel(ConnectionLabel, ConnectionNone);
-                StartServerButton.Text = ServerButtonStart;
+                UpdateLabel(ConnectionLabel, beforeConnectConnectionLabel);
+                StartServerButton.Text = beforeConnectButtonText;
             }
             PortInput.ReadOnly = on;
             serverStarted = on;
@@ -270,7 +266,6 @@ namespace ColorealityServer
 
         private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Visible = false;
             if (server != null)
             {
                 if (serverStarted) AppendLog("Closing server...");
@@ -289,7 +284,7 @@ namespace ColorealityServer
         private void LeapConfigBar_ValueChanged(object sender, EventArgs e)
         {
             TrackBar thisBar = (TrackBar)sender;
-            LeapConfigTextboxs[int.Parse(thisBar.Tag.ToString())].Text = (thisBar.Value * ConfigValuePrecision).ToString("0.####");
+            LeapConfigTextboxs[int.Parse(thisBar.Tag.ToString())].Text = (thisBar.Value * CONFIG_VALUE_PRECISION).ToString("0.####");
             UpdateLeapConfig();
         }
 
@@ -297,7 +292,9 @@ namespace ColorealityServer
         {
             LeapConfigBar_ValueChanged(sender, EventArgs.Empty);
         }
-        
+
+        const float CONFIG_VALUE_PRECISION = 0.0001f;
+        const int CONFIG_VALUE_PRECISION_TIMES = (int)(1 / CONFIG_VALUE_PRECISION);
         private void LeapConfigInput_KeyDown(object sender, KeyEventArgs e)
         {
             TextBox thisInput = (TextBox)sender;
@@ -307,35 +304,35 @@ namespace ColorealityServer
                 float value;
                 if (float.TryParse(thisInput.Text, out value))
                 {
-                    if (value > trackBar.Maximum * ConfigValuePrecision)
+                    if (value > trackBar.Maximum * CONFIG_VALUE_PRECISION)
                     {
                         trackBar.Value = trackBar.Maximum;
                     }
-                    else if (value < trackBar.Minimum * ConfigValuePrecision)
+                    else if (value < trackBar.Minimum * CONFIG_VALUE_PRECISION)
                     {
                         trackBar.Value = trackBar.Minimum;
                     }
                     else
                     {
-                        trackBar.Value = (int)(value * ConfigValuePrecisionTimes);
+                        trackBar.Value = (int)(value * CONFIG_VALUE_PRECISION_TIMES);
                     }
 
                     LeapConfigBar_ValueChanged(trackBar, EventArgs.Empty);
                 }
                 else
                 {
-                    thisInput.Text = (trackBar.Value * ConfigValuePrecision).ToString("0.###");
+                    thisInput.Text = (trackBar.Value * CONFIG_VALUE_PRECISION).ToString("0.###");
                 }
             }
         }
 
         private void UpdateLeapConfig()
         {
-            leapConfig.OffsetX = LeapOffsetXBar.Value * ConfigValuePrecision;
-            leapConfig.OffsetY = LeapOffsetYBar.Value * ConfigValuePrecision;
-            leapConfig.OffsetZ = LeapOffsetZBar.Value * ConfigValuePrecision;
-            leapConfig.Scale = LeapScaleBar.Value * ConfigValuePrecision;
-            if (OnConfigChanged != null) OnConfigChanged.Invoke(this, new SerializationEventArgs(LeapHmdConfig.DataIndex, SerializationUtil.Serialize(leapConfig)));
+            leapConfig.OffsetX = LeapOffsetXBar.Value * CONFIG_VALUE_PRECISION;
+            leapConfig.OffsetY = LeapOffsetYBar.Value * CONFIG_VALUE_PRECISION;
+            leapConfig.OffsetZ = LeapOffsetZBar.Value * CONFIG_VALUE_PRECISION;
+            leapConfig.Scale = LeapScaleBar.Value * CONFIG_VALUE_PRECISION;
+            if (OnConfigChanged != null) OnConfigChanged.Invoke(this, new SerializationEventArgs(LeapHmdConfig.DATA_INDEX, SerializationUtil.Serialize(leapConfig)));
         }
 
         private void NotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)

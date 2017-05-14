@@ -4,14 +4,14 @@ namespace Coloreality
 {
     public static class Globals
     {
-        public const int ServerDefaultPort = 2333;
-        public const string ServerDefaultIp = "192.168.1.101";
-        public const int DefaultBufferSize = 9000;
+        public const int SERVER_DEFAULT_PORT = 2333;
+        public const string SERVER_DEFAULT_IP = "192.168.1.101";
+        public const int DEFAULT_BUFFER_SIZE = 9000;
         
         /// <summary>
         /// Millisecond but integer type.
         /// </summary>
-        public const int DefaultSendInterval = 30;
+        public const int DEFAULT_SEND_INTERVAL = 30;
 
         public static void CloseThreadIfExists(ref Thread thread)
         {

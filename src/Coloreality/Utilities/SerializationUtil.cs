@@ -5,20 +5,20 @@ namespace Coloreality
 {
     public static class SerializationUtil
     {
-        private static BinaryFormatter defaultBinaryFormatter = null;
-        private static BinaryFormatter DefaultBinaryFormatter
+        private static BinaryFormatter _binaryFormatter = null;
+        private static BinaryFormatter binaryFormatter
         {
             get
             {
-                if (defaultBinaryFormatter == null)
+                if (_binaryFormatter == null)
                 {
-                    defaultBinaryFormatter = new BinaryFormatter()
+                    _binaryFormatter = new BinaryFormatter()
                     {
                         AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Simple,
                         Binder = new DefaultBinder()
                     };
                 }
-                return defaultBinaryFormatter;
+                return _binaryFormatter;
             }
         }
 
@@ -27,7 +27,7 @@ namespace Coloreality
             byte[] result;
             using (MemoryStream memSerialize = new MemoryStream())
             {
-                DefaultBinaryFormatter.Serialize(memSerialize, obj);
+                binaryFormatter.Serialize(memSerialize, obj);
                 result = memSerialize.ToArray();
             }
             return result;
@@ -40,7 +40,7 @@ namespace Coloreality
             {
                 try
                 {
-                    result = DefaultBinaryFormatter.Deserialize(memDeserialize);
+                    result = binaryFormatter.Deserialize(memDeserialize);
                 }
                 catch
                 {

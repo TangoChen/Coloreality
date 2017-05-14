@@ -2,6 +2,6 @@
 {
     public class LeapSimulator : SimulatorBase<LeapData>
     {
-        public LeapSimulator() : base(LeapData.DataIndex) { }
+        public LeapSimulator() : base(LeapData.DATA_INDEX) { }
     }
 }
