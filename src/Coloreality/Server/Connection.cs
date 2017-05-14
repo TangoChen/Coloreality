@@ -24,7 +24,7 @@ namespace Coloreality.Server
 
         Stopwatch sendIntervalWatch = new Stopwatch();
 
-        public Connection(Socket socket, DisconnectEventHandler disconnectHandler, int bufferSize = Globals.DEFAULT_BUFFER_SIZE, int sendInterval = Globals.DEFAULT_SEND_INTERVAL)
+        public Connection(Socket socket, DisconnectEventHandler disconnectHandler, int bufferSize = Globals.DefaultBufferSize, int sendInterval = Globals.DefaultSendInterval)
         {
             this.socket = socket;
             BufferSize = bufferSize;
@@ -98,8 +98,9 @@ namespace Coloreality.Server
                     {
                         socket.Send(value);
                     }
-
-                    sendIntervalWatch.Restart();
+                    //sendIntervalWatch.Restart();  //Restart() won't work for ColorealityUnity due to its different target framework that does not support it.
+                    sendIntervalWatch.Reset();
+                    sendIntervalWatch.Start();
                 }
                 catch (Exception ex)
                 {

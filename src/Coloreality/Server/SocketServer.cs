@@ -9,25 +9,25 @@ namespace Coloreality.Server
 {
     public class SocketServer
     {
-        public static IPAddress Ip { get; private set; }
+        public IPAddress Ip { get; private set; }
 
         public int Port { get; private set; }
 
-        private const int OPEN_PORT = -1;
+        private const int OpenPortFlag = -1;
         /// <summary>
         /// Try setting a port for server. Returns true if the port is available.
         /// </summary>
         /// <param name="port"></param>
         /// <param name="setOpenPortIfFailed">If true, will automatically set an open port when the input one is not available.</param>
-        /// <returns>return succeeded or failed as true and false.</returns>
-        public bool TrySetPort(int port = OPEN_PORT, bool setOpenPortIfFailed = false)
+        /// <returns>return true if succeeded.</returns>
+        public bool TrySetPort(int port = OpenPortFlag, bool setOpenPortIfFailed = false)
         {
             if (isListening)
             {
                 if (OnError != null) OnError.Invoke(this, new ConnectionErrorEventArgs("Server", "Cannot change the port when server is running."));
                 return false;
             }
-            if (port == OPEN_PORT)
+            if (port == OpenPortFlag)
             {
                 Port = NetworkUtil.GetOpenPort();
                 return true;
@@ -61,6 +61,14 @@ namespace Coloreality.Server
         Thread listenThread;
         Socket listener;
         bool isListening = false;
+
+        public bool IsListening
+        {
+            get
+            {
+                return isListening;
+            }
+        }
 
         public SocketServer(bool autoStartListen = false, int port = -1)
         {

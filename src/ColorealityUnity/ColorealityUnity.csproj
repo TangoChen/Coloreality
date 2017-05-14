@@ -41,10 +41,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Coloreality\Client\Events\UpdateDataEventArgs.cs">
-      <Link>Events\UpdateDataEventArgs.cs</Link>
+      <Link>Client\Events\UpdateDataEventArgs.cs</Link>
     </Compile>
     <Compile Include="..\Coloreality\Client\SocketClient.cs">
-      <Link>SocketClient.cs</Link>
+      <Link>Client\SocketClient.cs</Link>
     </Compile>
     <Compile Include="..\Coloreality\DataType.cs">
       <Link>DataType.cs</Link>
@@ -54,6 +54,9 @@
     </Compile>
     <Compile Include="..\Coloreality\Events\ReceiveEventArgs.cs">
       <Link>Events\ReceiveEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\Coloreality\Events\SerializationEventArgs.cs">
+      <Link>Events\SerializationEventArgs.cs</Link>
     </Compile>
     <Compile Include="..\Coloreality\Globals.cs">
       <Link>Globals.cs</Link>
@@ -72,6 +75,21 @@
     </Compile>
     <Compile Include="..\Coloreality\PreSerialization.cs">
       <Link>PreSerialization.cs</Link>
+    </Compile>
+    <Compile Include="..\Coloreality\Server\Connection.cs">
+      <Link>Server\Connection.cs</Link>
+    </Compile>
+    <Compile Include="..\Coloreality\Server\Events\ConnectEventArgs.cs">
+      <Link>Server\Events\ConnectEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\Coloreality\Server\Events\ConnectionErrorEventArgs.cs">
+      <Link>Server\Events\ConnectionErrorEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\Coloreality\Server\Events\ConnectionReceiveEventArgs.cs">
+      <Link>Server\Events\ConnectionReceiveEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\Coloreality\Server\SocketServer.cs">
+      <Link>Server\SocketServer.cs</Link>
     </Compile>
     <Compile Include="..\Coloreality\SimulatorBase.cs">
       <Link>SimulatorBase.cs</Link>
