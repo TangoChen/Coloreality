@@ -9,25 +9,25 @@ namespace Coloreality.Server
 {
     public class SocketServer
     {
-        public static IPAddress Ip { get; private set; }
+        public IPAddress Ip { get; private set; }
 
         public int Port { get; private set; }
 
-        private const int OPEN_PORT = -1;
+        private const int OpenPortFlag = -1;
         /// <summary>
         /// Try setting a port for server. Returns true if the port is available.
         /// </summary>
         /// <param name="port"></param>
         /// <param name="setOpenPortIfFailed">If true, will automatically set an open port when the input one is not available.</param>
-        /// <returns>return succeeded or failed as true and false.</returns>
-        public bool TrySetPort(int port = OPEN_PORT, bool setOpenPortIfFailed = false)
+        /// <returns>return true if succeeded.</returns>
+        public bool TrySetPort(int port = OpenPortFlag, bool setOpenPortIfFailed = false)
         {
             if (isListening)
             {
                 if (OnError != null) OnError.Invoke(this, new ConnectionErrorEventArgs("Server", "Cannot change the port when server is running."));
                 return false;
             }
-            if (port == OPEN_PORT)
+            if (port == OpenPortFlag)
             {
                 Port = NetworkUtil.GetOpenPort();
                 return true;
@@ -55,12 +55,63 @@ namespace Coloreality.Server
         public event ConnectionErrorEventHandler OnError;
         //public event ReceiveEventHandler OnReceived;
 
-        public List<string> ClientNameList { get; private set; }
-        Dictionary<string, Connection> connections = new Dictionary<string, Connection>();
+        private Dictionary<string, Connection> connectionsByName = new Dictionary<string, Connection>();
+        public Connection GetConnection(string name)
+        {
+            if (connectionsByName.ContainsKey(name)) { 
+                return connectionsByName[name];
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private Connection[] connections = new Connection[0];
+        public Connection[] Connections
+        {
+            get
+            {
+                return connections;
+            }
+        }
+
+        private int sendInterval = Globals.DefaultSendInterval;
+        public int SendInterval
+        {
+            get
+            {
+                return sendInterval;
+            }
+            set
+            {
+                if(value >= 0)
+                {
+                    sendInterval = value;
+                }
+            }
+        }
+
+        public void SetAllSendInterval(int value)
+        {
+            if (value < 0) return;
+            for (int i = 0; i < connections.Length; i++)
+            {
+                connections[i].SendInterval = value;
+            }
+        }
 
         Thread listenThread;
         Socket listener;
         bool isListening = false;
+
+        public bool IsListening
+        {
+            get
+            {
+                return isListening;
+            }
+        }
 
         public SocketServer(bool autoStartListen = false, int port = -1)
         {
@@ -72,7 +123,43 @@ namespace Coloreality.Server
                 Listen();
             }
         }
-            
+
+        /// <summary>
+        /// For manually setting ip address and port with simple checks on machine that does not support as some NetworkUtil class functions as on PC.
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <param name="port"></param>
+        public SocketServer(string ip, int port = Globals.ServerDefaultPort)
+        {
+            if (!SetIp(ip))
+            {
+                if (OnError != null) OnError.Invoke(this, new ConnectionErrorEventArgs("Server", "Cannot set ip: " + ip + "."));
+            }
+
+            if (NetworkUtil.IsPortInRange(port))
+            {
+                Port = port;
+            }
+            else if (OnError != null) {
+                OnError.Invoke(this, new ConnectionErrorEventArgs("Server", "Port number is out of range: " + port.ToString() + "."));
+            }
+
+        }
+
+        public bool SetIp(string ip)
+        {
+            IPAddress ipAddress;
+            if (IPAddress.TryParse(ip, out ipAddress))
+            {
+                Ip = ipAddress;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public void Listen()
         {
             if(listener == null) listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -96,10 +183,10 @@ namespace Coloreality.Server
                 try
                 {
                     Socket socketConnection = listener.Accept();
-                    Connection connection = new Connection(socketConnection, OnClosedConnection);
+                    Connection connection = new Connection(socketConnection, OnClosedConnection, Globals.DefaultBufferSize, sendInterval);
                     connection.OnError += OnError;
-                    connections.Add(connection.Name, connection);
-                    UpdateClientNames();
+                    connectionsByName.Add(connection.Name, connection);
+                    UpdateConnections();
                     if (OnConnected != null) OnConnected.Invoke(this, new ConnectionEventArgs(connection));
                 }
                 catch (Exception ex)
@@ -108,38 +195,37 @@ namespace Coloreality.Server
                 }
             }
         }
-        
-        private void UpdateClientNames()
+
+        private void UpdateConnections()
         {
-            ClientNameList = connections.Keys.ToList();
+            connections = connectionsByName.Values.ToArray();
         }
 
         public void SendAllRawBytes(byte[] value)
         {
-            foreach (Connection connection in connections.Values)
+            for (int i = 0; i < connections.Length; i++)
             {
-                connection.SendRawBytes(value);
+                connections[i].SendRawBytes(value);
             }
         }
 
         private void OnClosedConnection(object sender, ConnectionEventArgs e)
         {
-            connections.Remove(e.Connection.Name);
-            UpdateClientNames();
+            connectionsByName.Remove(e.Connection.Name);
+            UpdateConnections();
             if (OnDisconnected != null) OnDisconnected.Invoke(this, e);
         }
 
         public void CloseConnection(string name)
         {
-            connections[name].Close(true);
+            connectionsByName[name].Close(true);
         }
 
         public void CloseAllConnections()
         {
-            List<Connection> connectionList = connections.Values.ToList();
-            for (int i = 0; i < connectionList.Count; i++)
+            for (int i = 0; i < connections.Length; i++)
             {
-                connectionList[i].Close(true);
+                connections[i].Close(true);
             }
         }
         
@@ -147,7 +233,7 @@ namespace Coloreality.Server
         {
             get
             {
-                return connections.Count > 0;
+                return connectionsByName.Count > 0;
             }
         }
 
@@ -155,7 +241,7 @@ namespace Coloreality.Server
         {
             get
             {
-                return connections.Count;
+                return connectionsByName.Count;
             }
         }
 

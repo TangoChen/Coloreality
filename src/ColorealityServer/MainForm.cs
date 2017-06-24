@@ -2,8 +2,8 @@
 using System.Windows.Forms;
 using Coloreality;
 using Coloreality.Server;
-using Coloreality.LeapWrapper.Sender;
 using Coloreality.LeapWrapper;
+using Coloreality.LeapWrapper.Sender;
 using Leap;
 using ConnectionEventArgs = Coloreality.Server.ConnectionEventArgs;
 
@@ -14,25 +14,29 @@ namespace ColorealityServer
         SocketServer server;
         LeapReader leapReader;
 
+        public bool serverStarted = false;
+
         #region Leap object offset/scale configs.
         TrackBar[] LeapConfigBars;
         TextBox[] LeapConfigTextboxs;
 
         public event SerializationReadyEventHandler OnConfigChanged;
         LeapHmdConfig leapConfig = new LeapHmdConfig();
+
+        const float ConfigValuePrecision = 0.0001f;
+        const int ConfigValuePrecisionTimes = (int)(1 / ConfigValuePrecision);
         #endregion
 
-        #region Form control paramters.
-        string beforeConnectButtonText = "&Start Server";
-        string afterConnectButtonText = "&Close Server";
+        #region Form controls.
+        const string ServerButtonStart = "&Start Server";
+        const string ServerButtonClose = "&Close Server";
 
-        string beforeConnectConnectionLabel = "None";
-        string afterConnectConnectionLabel = "Waiting...";
-        #endregion
+        const string ConnectionNone = "None";
+        const string ConnectionWaiting = "Waiting...";
 
-        bool serverStarted = false;
         string logStartText = "Coloreality PC Server\r\nhttp://TangoChen.com\r\n";
-
+        #endregion
+        
         public MainForm()
         {
             InitializeComponent();
@@ -45,7 +49,7 @@ namespace ColorealityServer
             int usePort = Properties.Settings.Default.ServerPort;
             if (!NetworkUtil.IsPortAvailable(usePort))
             {
-                usePort = NetworkUtil.GetOpenPort(Globals.SERVER_DEFAULT_PORT);
+                usePort = NetworkUtil.GetOpenPort(Globals.ServerDefaultPort);
             }
             server = new SocketServer(false, usePort);
             server.OnConnected += Server_OnAddedConnection;
@@ -65,8 +69,8 @@ namespace ColorealityServer
 
             leapReader.StartConnection();
 
-            StartServerButton.Text = beforeConnectButtonText;
-            UpdateLabel(ConnectionLabel, beforeConnectConnectionLabel);
+            StartServerButton.Text = ServerButtonStart;
+            UpdateLabel(ConnectionLabel, ConnectionNone);
 
             AutoStartServerToggle.Checked = Properties.Settings.Default.AutoStartServer;
             if (AutoStartServerToggle.Checked)
@@ -95,7 +99,6 @@ namespace ColorealityServer
         {
             LeapStatusLabel.Text = value;
             AppendLog((log == "" ? value + "." : log));
-
         }
 
         void LeapController_Device(object sender, DeviceEventArgs e)
@@ -185,8 +188,8 @@ namespace ColorealityServer
                 PortInput.Text = server.Port.ToString();
                 AppendLog("Started server, waiting for connection...");
                 LogTextbox.Select();
-                UpdateLabel(ConnectionLabel, afterConnectConnectionLabel);
-                StartServerButton.Text = afterConnectButtonText;
+                UpdateLabel(ConnectionLabel, ConnectionWaiting);
+                StartServerButton.Text = ServerButtonClose;
             }
             else
             {
@@ -196,8 +199,8 @@ namespace ColorealityServer
                 }
 
                 AppendLog("Closed server.");
-                UpdateLabel(ConnectionLabel, beforeConnectConnectionLabel);
-                StartServerButton.Text = beforeConnectButtonText;
+                UpdateLabel(ConnectionLabel, ConnectionNone);
+                StartServerButton.Text = ServerButtonStart;
             }
             PortInput.ReadOnly = on;
             serverStarted = on;
@@ -266,6 +269,7 @@ namespace ColorealityServer
 
         private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
+            Visible = false;
             if (server != null)
             {
                 if (serverStarted) AppendLog("Closing server...");
@@ -281,20 +285,18 @@ namespace ColorealityServer
             Properties.Settings.Default.Save();
         }
 
-        private void LeapConfigBar_ValueChanged(object sender, EventArgs e)
+        private void LeapConfigBar_ValueChanged(object sender)
         {
             TrackBar thisBar = (TrackBar)sender;
-            LeapConfigTextboxs[int.Parse(thisBar.Tag.ToString())].Text = (thisBar.Value * CONFIG_VALUE_PRECISION).ToString("0.####");
+            LeapConfigTextboxs[int.Parse(thisBar.Tag.ToString())].Text = (thisBar.Value * ConfigValuePrecision).ToString("0.####");
             UpdateLeapConfig();
         }
 
-        private void LeapConfigBar_ValueChanged(object sender, MouseEventArgs e)
+        private void LeapConfigBar_MouseUp(object sender, MouseEventArgs e)
         {
-            LeapConfigBar_ValueChanged(sender, EventArgs.Empty);
+            LeapConfigBar_ValueChanged(sender);
         }
-
-        const float CONFIG_VALUE_PRECISION = 0.0001f;
-        const int CONFIG_VALUE_PRECISION_TIMES = (int)(1 / CONFIG_VALUE_PRECISION);
+        
         private void LeapConfigInput_KeyDown(object sender, KeyEventArgs e)
         {
             TextBox thisInput = (TextBox)sender;
@@ -304,40 +306,81 @@ namespace ColorealityServer
                 float value;
                 if (float.TryParse(thisInput.Text, out value))
                 {
-                    if (value > trackBar.Maximum * CONFIG_VALUE_PRECISION)
+                    if (value > trackBar.Maximum * ConfigValuePrecision)
                     {
                         trackBar.Value = trackBar.Maximum;
                     }
-                    else if (value < trackBar.Minimum * CONFIG_VALUE_PRECISION)
+                    else if (value < trackBar.Minimum * ConfigValuePrecision)
                     {
                         trackBar.Value = trackBar.Minimum;
                     }
                     else
                     {
-                        trackBar.Value = (int)(value * CONFIG_VALUE_PRECISION_TIMES);
+                        trackBar.Value = (int)(value * ConfigValuePrecisionTimes);
                     }
 
-                    LeapConfigBar_ValueChanged(trackBar, EventArgs.Empty);
+                    LeapConfigBar_ValueChanged(trackBar);
                 }
                 else
                 {
-                    thisInput.Text = (trackBar.Value * CONFIG_VALUE_PRECISION).ToString("0.###");
+                    thisInput.Text = (trackBar.Value * ConfigValuePrecision).ToString("0.###");
                 }
             }
         }
 
         private void UpdateLeapConfig()
         {
-            leapConfig.OffsetX = LeapOffsetXBar.Value * CONFIG_VALUE_PRECISION;
-            leapConfig.OffsetY = LeapOffsetYBar.Value * CONFIG_VALUE_PRECISION;
-            leapConfig.OffsetZ = LeapOffsetZBar.Value * CONFIG_VALUE_PRECISION;
-            leapConfig.Scale = LeapScaleBar.Value * CONFIG_VALUE_PRECISION;
-            if (OnConfigChanged != null) OnConfigChanged.Invoke(this, new SerializationEventArgs(LeapHmdConfig.DATA_INDEX, SerializationUtil.Serialize(leapConfig)));
+            leapConfig.OffsetX = LeapOffsetXBar.Value * ConfigValuePrecision;
+            leapConfig.OffsetY = LeapOffsetYBar.Value * ConfigValuePrecision;
+            leapConfig.OffsetZ = LeapOffsetZBar.Value * ConfigValuePrecision;
+            leapConfig.Scale = LeapScaleBar.Value * ConfigValuePrecision;
+            if (OnConfigChanged != null) OnConfigChanged.Invoke(this, new SerializationEventArgs(LeapHmdConfig.DataIndex, SerializationUtil.Serialize(leapConfig)));
         }
 
         private void NotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             WindowState = FormWindowState.Normal;
+        }
+
+        private void SendIntervalBar_MouseUp(object sender, MouseEventArgs e)
+        {
+            SendIntervalInput.Text = SendIntervalBar.Value.ToString();
+            SetInterval(SendIntervalBar.Value);
+        }
+
+        private void SendIntervalInput_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                int value;
+                if (int.TryParse(SendIntervalInput.Text, out value))
+                {
+                    if (value > SendIntervalBar.Maximum)
+                    {
+                        SendIntervalBar.Value = SendIntervalBar.Maximum;
+                    }
+                    else if (value < SendIntervalBar.Minimum)
+                    {
+                        SendIntervalBar.Value = SendIntervalBar.Minimum;
+                    }
+                    else
+                    {
+                        SendIntervalBar.Value = value;
+                    }
+
+                    SetInterval(SendIntervalBar.Value);
+                }
+                else
+                {
+                    SendIntervalInput.Text = SendIntervalBar.Value.ToString();
+                }
+            }
+        }
+
+        private void SetInterval(int value)
+        {
+            server.SendInterval = value;
+            server.SetAllSendInterval(SendIntervalBar.Value);
         }
     }
 }

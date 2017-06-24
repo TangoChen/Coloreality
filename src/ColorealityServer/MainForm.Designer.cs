@@ -55,11 +55,15 @@
             this.LeapScaleInput = new System.Windows.Forms.TextBox();
             this.ScaleLabel = new System.Windows.Forms.Label();
             this.PanelLeapConfig = new System.Windows.Forms.Panel();
+            this.label5 = new System.Windows.Forms.Label();
+            this.SendIntervalInput = new System.Windows.Forms.TextBox();
+            this.SendIntervalBar = new System.Windows.Forms.TrackBar();
             ((System.ComponentModel.ISupportInitialize)(this.LeapOffsetXBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LeapOffsetYBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LeapOffsetZBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LeapScaleBar)).BeginInit();
             this.PanelLeapConfig.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SendIntervalBar)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -95,7 +99,7 @@
             // IpTextBox
             // 
             this.IpTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.IpTextBox.Location = new System.Drawing.Point(70, 110);
+            this.IpTextBox.Location = new System.Drawing.Point(70, 108);
             this.IpTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.IpTextBox.Name = "IpTextBox";
             this.IpTextBox.ReadOnly = true;
@@ -121,14 +125,14 @@
             this.LogTextbox.Multiline = true;
             this.LogTextbox.Name = "LogTextbox";
             this.LogTextbox.ReadOnly = true;
-            this.LogTextbox.Size = new System.Drawing.Size(191, 245);
+            this.LogTextbox.Size = new System.Drawing.Size(191, 275);
             this.LogTextbox.TabIndex = 3;
             this.LogTextbox.Text = "Logs\r\n";
             // 
             // PortInput
             // 
             this.PortInput.BackColor = System.Drawing.SystemColors.Window;
-            this.PortInput.Location = new System.Drawing.Point(70, 132);
+            this.PortInput.Location = new System.Drawing.Point(70, 130);
             this.PortInput.Margin = new System.Windows.Forms.Padding(2);
             this.PortInput.Name = "PortInput";
             this.PortInput.Size = new System.Drawing.Size(169, 21);
@@ -176,7 +180,7 @@
             // AutoStartServerToggle
             // 
             this.AutoStartServerToggle.AutoSize = true;
-            this.AutoStartServerToggle.Location = new System.Drawing.Point(256, 261);
+            this.AutoStartServerToggle.Location = new System.Drawing.Point(256, 291);
             this.AutoStartServerToggle.Name = "AutoStartServerToggle";
             this.AutoStartServerToggle.Size = new System.Drawing.Size(180, 16);
             this.AutoStartServerToggle.TabIndex = 9;
@@ -225,7 +229,7 @@
             this.LeapOffsetXBar.Tag = "0";
             this.LeapOffsetXBar.TickFrequency = 0;
             this.LeapOffsetXBar.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.LeapOffsetXBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LeapConfigBar_ValueChanged);
+            this.LeapOffsetXBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LeapConfigBar_MouseUp);
             // 
             // LeapOffsetYBar
             // 
@@ -240,7 +244,7 @@
             this.LeapOffsetYBar.Tag = "1";
             this.LeapOffsetYBar.TickFrequency = 0;
             this.LeapOffsetYBar.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.LeapOffsetYBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LeapConfigBar_ValueChanged);
+            this.LeapOffsetYBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LeapConfigBar_MouseUp);
             // 
             // LeapOffsetYInput
             // 
@@ -274,7 +278,7 @@
             this.LeapOffsetZBar.Tag = "2";
             this.LeapOffsetZBar.TickFrequency = 0;
             this.LeapOffsetZBar.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.LeapOffsetZBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LeapConfigBar_ValueChanged);
+            this.LeapOffsetZBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LeapConfigBar_MouseUp);
             // 
             // LeapOffsetZInput
             // 
@@ -309,7 +313,7 @@
             this.LeapScaleBar.TickFrequency = 0;
             this.LeapScaleBar.TickStyle = System.Windows.Forms.TickStyle.None;
             this.LeapScaleBar.Value = 10000;
-            this.LeapScaleBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LeapConfigBar_ValueChanged);
+            this.LeapScaleBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LeapConfigBar_MouseUp);
             // 
             // LeapScaleInput
             // 
@@ -346,16 +350,53 @@
             this.PanelLeapConfig.Controls.Add(this.OffsetZLabel);
             this.PanelLeapConfig.Controls.Add(this.LeapOffsetYBar);
             this.PanelLeapConfig.Enabled = false;
-            this.PanelLeapConfig.Location = new System.Drawing.Point(6, 158);
+            this.PanelLeapConfig.Location = new System.Drawing.Point(6, 183);
             this.PanelLeapConfig.Name = "PanelLeapConfig";
             this.PanelLeapConfig.Size = new System.Drawing.Size(244, 128);
             this.PanelLeapConfig.TabIndex = 29;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(12, 159);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(59, 12);
+            this.label5.TabIndex = 30;
+            this.label5.Text = "Interval:";
+            // 
+            // SendIntervalInput
+            // 
+            this.SendIntervalInput.Location = new System.Drawing.Point(195, 156);
+            this.SendIntervalInput.Name = "SendIntervalInput";
+            this.SendIntervalInput.Size = new System.Drawing.Size(44, 21);
+            this.SendIntervalInput.TabIndex = 31;
+            this.SendIntervalInput.Tag = "0";
+            this.SendIntervalInput.Text = "30";
+            this.SendIntervalInput.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SendIntervalInput_KeyDown);
+            // 
+            // SendIntervalBar
+            // 
+            this.SendIntervalBar.AutoSize = false;
+            this.SendIntervalBar.Location = new System.Drawing.Point(70, 158);
+            this.SendIntervalBar.Margin = new System.Windows.Forms.Padding(2);
+            this.SendIntervalBar.Maximum = 500;
+            this.SendIntervalBar.Name = "SendIntervalBar";
+            this.SendIntervalBar.Size = new System.Drawing.Size(120, 18);
+            this.SendIntervalBar.TabIndex = 32;
+            this.SendIntervalBar.Tag = "0";
+            this.SendIntervalBar.TickFrequency = 0;
+            this.SendIntervalBar.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.SendIntervalBar.Value = 40;
+            this.SendIntervalBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.SendIntervalBar_MouseUp);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(456, 283);
+            this.ClientSize = new System.Drawing.Size(456, 319);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.SendIntervalInput);
+            this.Controls.Add(this.SendIntervalBar);
             this.Controls.Add(this.PanelLeapConfig);
             this.Controls.Add(this.AutoStartServerToggle);
             this.Controls.Add(this.StartServerButton);
@@ -382,6 +423,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.LeapScaleBar)).EndInit();
             this.PanelLeapConfig.ResumeLayout(false);
             this.PanelLeapConfig.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SendIntervalBar)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -415,6 +457,9 @@
         private System.Windows.Forms.TextBox LeapScaleInput;
         private System.Windows.Forms.Label ScaleLabel;
         private System.Windows.Forms.Panel PanelLeapConfig;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox SendIntervalInput;
+        private System.Windows.Forms.TrackBar SendIntervalBar;
     }
 }
 

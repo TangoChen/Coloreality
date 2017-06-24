@@ -8,8 +8,8 @@ namespace Coloreality
 {
     public static class NetworkUtil
     {
-        public const int PORT_MIN = 0;
-        public const int PORT_MAX = 65535;
+        public const int PortMin = 0;
+        public const int PortMax = 65535;
 
         public static IPAddress GetIp()
         {
@@ -26,7 +26,7 @@ namespace Coloreality
 
         public static int GetOpenPort(int start = 10000, int length = 500)
         {
-            int searchingEnd = System.Math.Min(PORT_MAX, start + length);
+            int searchingEnd = System.Math.Min(PortMax, start + length);
             List<int> usingPorts = GetUsingPorts();
             for (int checkPort = start; checkPort <= searchingEnd; checkPort++)
             {
@@ -40,7 +40,12 @@ namespace Coloreality
 
         public static bool IsPortAvailable(int value)
         {
-            return value >= PORT_MIN && value <= PORT_MAX && !GetUsingPorts().Contains(value);
+            return IsPortInRange(value) && !GetUsingPorts().Contains(value);
+        }
+
+        public static bool IsPortInRange(int value)
+        {
+            return value >= PortMin && value <= PortMax;
         }
 
         private static List<int> GetUsingPorts()

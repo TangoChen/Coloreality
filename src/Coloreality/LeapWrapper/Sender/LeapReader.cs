@@ -13,13 +13,13 @@ namespace Coloreality.LeapWrapper.Sender
 
         public event SerializationReadyEventHandler OnSerializationReady;
 
-        private LeapData _data = new LeapData();
+        private LeapData data = new LeapData();
         public LeapData Data {
-            get { return _data; }
-            set { _data = value; }
+            get { return data; }
+            set { data = value; }
         }
 
-        private int _sendNoHandMaxCount = 5;
+        private int sendNoHandMaxCount = 5;
         /// <summary>
         /// The maximined times to send frame data continuously with NO HAND but only frame Id, when When Leap device does not detect any hands.
         /// Set -1 to not limit the count and keep sending.
@@ -27,11 +27,14 @@ namespace Coloreality.LeapWrapper.Sender
         /// </summary>
         public int SendNoHandMaxCount
         {
-            get { return _sendNoHandMaxCount; }
-            set { _sendNoHandMaxCount = value; }
+            get { return sendNoHandMaxCount; }
+            set { sendNoHandMaxCount = value; }
         }
 
         private bool readBones = false;
+        /// <summary>
+        /// false by default.
+        /// </summary>
         public bool ReadBones
         {
             get { return readBones; }
@@ -39,6 +42,9 @@ namespace Coloreality.LeapWrapper.Sender
         }
 
         private bool readArm = true;
+        /// <summary>
+        /// true by default.
+        /// </summary>
         public bool ReadArm
         {
             get { return readArm; }
@@ -47,10 +53,14 @@ namespace Coloreality.LeapWrapper.Sender
 
         int sentNoHandTimes = 0;
 
+        /// <summary>
+        /// Limited maximined amount of sending hand data. -1 by default as no limit amount.
+        /// Automatically set to 2 when enabling HMD optimized mode.
+        /// </summary>
         public int limitedHandCount = -1;
         
-        private const int FINGER_COUNT = 5;
-        private const int BONE_COUNT = 4;
+        private const int FingerCount = 5;
+        private const int BoneCount = 4;
         public LeapReader(bool hmdOptimized = true)
         {
             SetPolicy(PolicyFlag.POLICY_BACKGROUND_FRAMES);
@@ -74,7 +84,7 @@ namespace Coloreality.LeapWrapper.Sender
             Frame frame = e.frame;
             if (frame == null)
             {
-                //OnSerializationReady.Invoke(this, new SerializationEventArgs(LeapSerialization.DATA_INDEX));
+                //OnSerializationReady.Invoke(this, new SerializationEventArgs(LeapSerialization.DataIndex));
                 return;
             }
 
@@ -92,7 +102,7 @@ namespace Coloreality.LeapWrapper.Sender
 
                 List<Finger> fingers = hand.Fingers;
                 List<LeapFinger> leapFingers = new List<LeapFinger>();
-                for (int fingerIndex = 0; fingerIndex < FINGER_COUNT; fingerIndex++)
+                for (int fingerIndex = 0; fingerIndex < FingerCount; fingerIndex++)
                 {
                     Finger finger = fingers[fingerIndex];
                     LeapFinger leapFinger = new LeapFinger()
@@ -111,8 +121,8 @@ namespace Coloreality.LeapWrapper.Sender
                     if (readBones)
                     {
                         Bone[] bones = fingers[fingerIndex].bones;
-                        LeapBone[] leapBones = new LeapBone[BONE_COUNT];
-                        for (int boneIndex = 0; boneIndex < BONE_COUNT; boneIndex++)
+                        LeapBone[] leapBones = new LeapBone[BoneCount];
+                        for (int boneIndex = 0; boneIndex < BoneCount; boneIndex++)
                         {
                             leapBones[boneIndex] = new LeapBone()
                             {
@@ -171,16 +181,16 @@ namespace Coloreality.LeapWrapper.Sender
                 newFrame.Hands.Add(leapHand);
             }
             
-            _data.frame = newFrame;
+            data.frame = newFrame;
 
             if (hands.Count > 0)
             {
-                OnSerializationReady.Invoke(this, new SerializationEventArgs(LeapData.DATA_INDEX, SerializationUtil.Serialize(_data), true));
+                OnSerializationReady.Invoke(this, new SerializationEventArgs(LeapData.DataIndex, SerializationUtil.Serialize(data), true));
                 sentNoHandTimes = 0;
             }
             else if (SendNoHandMaxCount == -1 || ++sentNoHandTimes <= SendNoHandMaxCount)
             {
-                OnSerializationReady.Invoke(this, new SerializationEventArgs(LeapData.DATA_INDEX, SerializationUtil.Serialize(_data), true));
+                OnSerializationReady.Invoke(this, new SerializationEventArgs(LeapData.DataIndex, SerializationUtil.Serialize(data), true));
             }
         }
 
