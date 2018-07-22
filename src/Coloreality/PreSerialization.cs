@@ -5,13 +5,13 @@ namespace Coloreality
     [Serializable]
     public struct PreSerialization
     {
-        public int dataIndex;
-        public int dataLength;
+        public int DataIndex { get; private set; }
+        public int DataLength { get; private set; }
 
         public PreSerialization(int dataIndex, int dataLength)
         {
-            this.dataIndex = dataIndex;
-            this.dataLength = dataLength;
+            DataIndex = dataIndex;
+            DataLength = dataLength;
         }
 
         public byte[] ToSerialization()

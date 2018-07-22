@@ -6,19 +6,17 @@ using System.Collections.Generic;
 
 namespace Coloreality.Client
 {
-    public delegate void ConnectEventHandler(object sender, EventArgs e);
-    public delegate void DisconnectEventHandler(object sender, EventArgs e);
 
     public class SocketClient
     {
         public int bufferSize = Globals.DefaultBufferSize;
 
-        public event ConnectEventHandler OnConnected;
-        public event ReceiveEventHandler OnReceived;
-        public event DisconnectEventHandler OnDisconnected;
-        public event ErrorEventHandler OnError;
+        public EventHandler<EventArgs> OnConnected;
+        public EventHandler<EventArgs> OnDisconnected;
+        public EventHandler<ReceiveEventArgs> OnReceived;
+        public EventHandler<ErrorEventArgs> OnError;
 
-        public Dictionary<int, ReceiveEventHandler> OnReceiveDataCollection = new Dictionary<int, ReceiveEventHandler>();
+        public Dictionary<int, EventHandler<ReceiveEventArgs>> OnReceiveDataCollection = new Dictionary<int, EventHandler<ReceiveEventArgs>>();
 
         public int connectTimeout = 5000;
 
@@ -214,8 +212,8 @@ namespace Coloreality.Client
                     object serializedObject = receiveMessage.SerializedObject;
                     if (serializedObject == null) return;
                     PreSerialization nextSerialization = (PreSerialization)serializedObject;
-                    newDataIndex = nextSerialization.dataIndex;
-                    newLength = nextSerialization.dataLength;
+                    newDataIndex = nextSerialization.DataIndex;
+                    newLength = nextSerialization.DataLength;
                     fullDataTemp = new byte[newLength];
 
                     recievedLength = 0;

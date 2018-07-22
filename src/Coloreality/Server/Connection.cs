@@ -11,9 +11,9 @@ namespace Coloreality.Server
         public int BufferSize { get; set; }
         public int SendInterval { get; set; }
 
-        public event ConnectionReceiveEventHandler OnReceivedMessage;
-        public event DisconnectEventHandler OnDisconnected;
-        public event ConnectionErrorEventHandler OnError;
+        public EventHandler<ConnectionReceiveEventArgs> OnReceivedMessage;
+        public EventHandler<ConnectionEventArgs> OnDisconnected;
+        public EventHandler<ConnectionErrorEventArgs> OnError;
 
         public bool closeForCommand = true;
 
@@ -24,7 +24,7 @@ namespace Coloreality.Server
 
         Stopwatch sendIntervalWatch = new Stopwatch();
 
-        public Connection(Socket socket, DisconnectEventHandler disconnectHandler, int bufferSize = Globals.DefaultBufferSize, int sendInterval = Globals.DefaultSendInterval)
+        public Connection(Socket socket, EventHandler<ConnectionEventArgs> disconnectHandler, int bufferSize = Globals.DefaultBufferSize, int sendInterval = Globals.DefaultSendInterval)
         {
             this.socket = socket;
             BufferSize = bufferSize;

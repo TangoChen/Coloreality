@@ -50,10 +50,10 @@ namespace Coloreality.Server
             }
         }
 
-        public event ConnectEventHandler OnConnected;
-        public event DisconnectEventHandler OnDisconnected;
-        public event ConnectionErrorEventHandler OnError;
-        //public event ReceiveEventHandler OnReceived;
+        public EventHandler<ConnectionEventArgs> OnConnected;
+        public EventHandler<ConnectionEventArgs> OnDisconnected;
+        public EventHandler<ConnectionErrorEventArgs> OnError;
+        //public EventHandler<ReceiveEventArgs> OnReceived;
 
         private Dictionary<string, Connection> connectionsByName = new Dictionary<string, Connection>();
         public Connection GetConnection(string name)

@@ -9,10 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Coloreality</RootNamespace>
     <AssemblyName>Coloreality</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,36 +32,26 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LeapCSharp.NET4.0">
-      <HintPath>..\..\..\..\..\Projects\COLOREALITY\LeapDeveloperKit_3.2.0+45899_win\LeapSDK\lib\LeapCSharp.NET4.0.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Events\ErrorEventArgs.cs" />
     <Compile Include="DataType.cs" />
-    <Compile Include="Events\ReceiveEventArgs.cs" />
+    <Compile Include="GlobalEventArgs.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="LeapWrapper\LeapData.cs" />
     <Compile Include="LeapWrapper\LeapHmdConfig.cs" />
     <Compile Include="LeapWrapper\Receiver\LeapHmdConfigReceiver.cs" />
     <Compile Include="LeapWrapper\Receiver\LeapSimulator.cs" />
-    <Compile Include="LeapWrapper\Sender\LeapReader.cs" />
-    <Compile Include="LeapWrapper\Sender\LeapUtil.cs" />
     <Compile Include="PreSerialization.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Events\SerializationEventArgs.cs" />
     <Compile Include="Server\Connection.cs" />
-    <Compile Include="Server\Events\ConnectEventArgs.cs" />
-    <Compile Include="Server\Events\ConnectionErrorEventArgs.cs" />
-    <Compile Include="Server\Events\ConnectionReceiveEventArgs.cs" />
+    <Compile Include="Server\ServerEventArgs.cs" />
     <Compile Include="Client\SocketClient.cs" />
     <Compile Include="Server\SocketServer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SimulatorBase.cs" />
-    <Compile Include="Client\Events\UpdateDataEventArgs.cs" />
+    <Compile Include="Client\ClientEventArgs.cs" />
     <Compile Include="Utilities\ByteUtil.cs" />
     <Compile Include="Utilities\DefaultBinder.cs" />
     <Compile Include="Utilities\NetworkUtil.cs" />

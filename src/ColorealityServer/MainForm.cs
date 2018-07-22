@@ -3,7 +3,6 @@ using System.Windows.Forms;
 using Coloreality;
 using Coloreality.Server;
 using Coloreality.LeapWrapper;
-using Coloreality.LeapWrapper.Sender;
 using Leap;
 using ConnectionEventArgs = Coloreality.Server.ConnectionEventArgs;
 
@@ -20,7 +19,7 @@ namespace ColorealityServer
         TrackBar[] LeapConfigBars;
         TextBox[] LeapConfigTextboxs;
 
-        public event SerializationReadyEventHandler OnConfigChanged;
+        public EventHandler<SerializationEventArgs> OnConfigChanged;
         LeapHmdConfig leapConfig = new LeapHmdConfig();
 
         const float ConfigValuePrecision = 0.0001f;
@@ -180,7 +179,7 @@ namespace ColorealityServer
             }
         }
 
-        public void ServerSwitch(bool on = true)
+        private void ServerSwitch(bool on = true)
         {
             if (on)
             {

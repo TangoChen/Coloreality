@@ -1,10 +1,11 @@
 ﻿using Coloreality.Client;
+using System;
 
 namespace Coloreality
 {
     public class SimulatorBase<T>
     {
-        public event UpdateDataEventHandler<T> OnUpdatedData;
+        public EventHandler<UpdateDataEventArgs<T>> OnUpdatedData;
 
         public readonly int DataIndex;
         public T Data { get; private set; }

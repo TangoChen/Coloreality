@@ -8,7 +8,6 @@ namespace Coloreality
     {
         public override Type BindToType(string assemblyName, string typeName)
         {
-            Type type = null;
             try
             {
                 string name = assemblyName.Split(',')[0];
@@ -17,11 +16,10 @@ namespace Coloreality
                 {
                     if (assembly.FullName.Split(',')[0] == name)
                     {
-                        type = assembly.GetType(typeName);
-                        break;
+                        return assembly.GetType(typeName);
                     }
                 }
-                return type;
+                return null;
             }
             catch
             {
